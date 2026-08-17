@@ -27,6 +27,7 @@ class TablesDb:
                     public_id uuid,
                     name text not null,
                     password text,
+                    role text not null,
                     wage numeric(10, 2),
                     created_at timestamptz default current_timestamp
                     )
