@@ -28,7 +28,7 @@ class TablesDb:
                     name text not null,
                     password text,
                     wage numeric(10, 2),
-                    created_at timestamptz current_timestamp
+                    created_at timestamptz default current_timestamp
                     )
                     """,
             "expenses": """
@@ -39,7 +39,7 @@ class TablesDb:
                         quantity int not null,
                         price numeric (10,2),
                         created_at timestamptz default current_timestamp,
-                        foreign (user_id) references users(id) on delete cascade
+                        foreign key (user_id) references users(id) on delete cascade
                         )
                         """     
         }
@@ -53,7 +53,8 @@ class TablesDb:
 
                 for table, sql in self.sql.items():
 
-                    logger.info(f"Criando tabela {table} caso não exista...")
+                    logger.info(f"Criando {table} se não existir")
+
 
                     session.execute(text(sql))
 
