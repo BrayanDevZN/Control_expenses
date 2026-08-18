@@ -160,6 +160,11 @@ def logout(response:Response):
 
         return response
 
+    except Exception as e:
+        raise HTTPException(
+            detail="error", status_code=501
+        )
+
 
 
 
