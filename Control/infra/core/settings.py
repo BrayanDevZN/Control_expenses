@@ -2,9 +2,15 @@
 Carrega as variaveis de ambiente
 """
 
-class NotFoundUrlError(str):
+class NotFoundUrlError(Exception):
 
     pass
+
+
+
+class NotFoundSingError(Exception):
+    pass
+
 
 try:
 
@@ -26,11 +32,18 @@ try:
 
 
     url = os.getenv("url")
+    sing = os.getenv("sing")
 
     #Se a url não existir, levanta erro
     if url is None:
 
         raise NotFoundUrlError("Not found url")
+
+    if sing is None:
+
+        raise NotFoundSingError("Not found sing jwt")
+
+    
 
 except Exception as e:
 
