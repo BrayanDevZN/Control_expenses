@@ -5,7 +5,7 @@ junta os modulos
 #Pega a engine do banco
 from infra.core.settings import url, sing
 from infra.database.connection import connection
-
+from infra.core.security import Users
 engine = connection(url)
 
 
