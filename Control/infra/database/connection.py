@@ -19,8 +19,14 @@ def connection(url:str) -> Engine:
 
         logger.info("Criando conexão com banco de dados...")
 
+        #Testa a conexão
+        
+        eng  = create_engine(url)
 
-        return create_engine(url)
+        with eng.begin() as session:
+            pass
+
+        return eng
 
     except Exception as e:
         logger.error(e)

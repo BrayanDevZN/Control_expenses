@@ -11,7 +11,7 @@ try:
     #Se o arquivo .env existir, ele puxa do caminho, caso contrario, ele carrega da raiz
     import os
 
-    if os.path.exists("infra/core/.env"):
+    if os.path.exists("infra/core/.env") or os.path.exists("Control/infra/core/.env"):
 
         from pathlib import Path
 
