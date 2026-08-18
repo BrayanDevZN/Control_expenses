@@ -3,13 +3,13 @@ Cria os handle de users
 """
 
 from fastapi import APIRouter, HTTPException, Cookie, Response
-from service.database import control_db
+from service.manage import control_db, jwt
 import controller.models.model_user as model
 from domain.jwt import JwtToken
 from domain.hash import HashPass
 router_users = APIRouter(prefix="/users", tags=["users"])
 
-jwt = JwtToken()
+
 hash = HashPass()
 
 #Rota de criação de conta
