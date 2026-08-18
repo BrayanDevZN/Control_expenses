@@ -40,17 +40,19 @@ class UsersDb:
             logger.error(e)
             raise UsersDbError(e)
 
-    #Busca usuario pelo id publico
-    def select(self, public_id:int) -> dict|None:
+    #Busca usuario pelo id publico ou email
+    def select(self, search:int|str) -> dict|None:
 
         try:
 
             logger.info("Buscando usuario...")
 
+            data = "email" if isinstance(search, str) else "public_id"
+
             with self.eng.begin() as session:
 
                 result = session.execute(
-                    text("select * from users where public_id = :public_id"), {"public_id": public_id}
+                    text("select * from users where :data = :search"), {"data":data, "search":search}
                 )
 
             return result.mappings().fetchone()
