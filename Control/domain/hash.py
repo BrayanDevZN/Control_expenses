@@ -11,7 +11,7 @@ class HashPass:
     @staticmethod
     def create(password:str) -> str:
 
-        logger.info("Condificando senha...")
+        logger.info("Codificando senha...")
 
         new_pass = bcrypt.hashpw(password=password.encode(), salt=bcrypt.gensalt())
 
@@ -23,7 +23,7 @@ class HashPass:
     @staticmethod
     def valid(password:str, password_hash:str) -> bool:
 
-        logger.info("Conparando senhas...")
+        logger.info("Comparando senhas...")
 
         return bcrypt.checkpw(password=password.encode(), hashed_password=password_hash.encode())
 
