@@ -3,14 +3,9 @@ Cria os handle de users
 """
 
 from fastapi import APIRouter, HTTPException, Cookie, Response
-from service.manage import control_db, jwt
+from service.manage import control_db, jwt, hash
 import controller.models.model_user as model
-from domain.jwt import JwtToken
-from domain.hash import HashPass
 router_users = APIRouter(prefix="/users", tags=["users"])
-
-
-hash = HashPass()
 
 #Rota de criação de conta
 @router_users.post("/")
@@ -132,15 +127,15 @@ async def delete(response:Response,password:str, token:str|None = Cookie(default
 
         control_db.users.delete(public_id=id)
 
-        await response.delete_cookie(
+        response.delete_cookie(
             key="user_token"
         )
 
-        await response.status_code = 201
+        response.status_code = 201
 
         response.body = b'{"status": "sucess"}'
 
-        return response
+        return await response
 
     except Exception as e:
 

@@ -1,19 +1,10 @@
 """
-junta a classe do banco com a engine
+junta os modulos
 """
-
-
-from infra.manage import engine, sing
-from repository.manage import ControlDb
-
-control_db = ControlDb(engine=engine)
+from service.db import control_db
+from service.encode import jwt, hash
+from service.midleware import ValidMidlleware
 
 
 
-"""
-Junta a chave do jwt com a classe 
-"""
 
-from domain.jwt import JwtToken
-
-jwt = JwtToken(sing=sing)
