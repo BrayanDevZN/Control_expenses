@@ -26,17 +26,18 @@ class TablesDb:
                     id serial primary key,
                     public_id uuid,
                     name text not null,
+                    email text not null,
                     password text,
                     role text not null,
                     wage numeric(10, 2),
                     created_at timestamptz default current_timestamp
                     )
                     """,
-            "expenses": """
-                        create table if not exists expenses( 
+            "expanses": """
+                        create table if not exists expanses( 
                         id serial primary key,
                         user_id int,
-                        name text not null,
+                        name text not null unique,
                         quantity int not null,
                         price numeric (10,2),
                         created_at timestamptz default current_timestamp,
