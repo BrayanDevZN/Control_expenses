@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from controller.handles.users import router_users
 from controller.midllewares.users import Midlleware
 from controller.handles.expanses import router_expanses
+from infra.manage import domain
 class Main:
 
     def __init__(self)-> None:
@@ -34,7 +35,7 @@ class Main:
 
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=[domain],
             allow_methods=["*"],
             allow_headers=["*"],
             allow_credentials=True,
