@@ -27,7 +27,7 @@ class ValidMidlleware:
 
         if cookie is None:
 
-            data = dict(self.req.json())
+            data = await dict(self.req.json())
 
             if not "email" in data.keys():
 
