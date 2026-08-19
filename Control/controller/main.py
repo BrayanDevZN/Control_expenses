@@ -52,10 +52,8 @@ class Main:
 
 
 #Inicializa a instancia
-if __name__ == "__main__":
-
-    instance = Main()
-    app = instance.run()
+instance = Main()
+app = instance.run()
 
 
 
