@@ -29,21 +29,51 @@ class GetUser:
         self.user = control_db.users.select(int(self.public_id))
 
     #Valida se o usuario existe ou não
-    def _exists(self) -> None|HTTPException:
+    async def _exists_user(self) -> None|HTTPException:
 
-        return HTTPException(
+        return await  HTTPException(
             detail="user not found", status_code=401
         ) if self.user is None else None
 
+
+    #Confere se o produto não existe, ele vai ser executado somente na rota de criação de gastos
+    async def _not_exists(self) -> None|HTTPException:
+
+        if self.req.method == "POST":
+
+            body =  await self.req.json()
+
+            expanse = control_db.expanses.select(user_id=self.user["id"], name=body["name"])
+
+            return await  HTTPException(
+                detail=f"{body["name"]} exists"
+            ) if expanse is not None else None
+
+    #Se a validação de gasto o usuario não for None, ele retorna o erro
+    async def _valid(self) -> None|HTTPException:
+
+        user= await self._exists_user()
+        expanse = await self._not_exists()
+
+        if user is not None:
+
+            return user
+
+        elif expanse is not None:
+            return expanse
+
+        return None
+
+    
     #Executa os metodos e retornar o id se o usaurio existir
-    def run(self) -> int|None:
+    async def run(self) -> int|None:
 
         self._public()
         self._user()
 
-        exists = self._exists()
+        exists = await self._valid()
 
-        return exists if exists else self.user["id"]
+        return await exists if exists else self.user["id"]
 
 
 
