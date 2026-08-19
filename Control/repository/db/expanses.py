@@ -76,7 +76,7 @@ class ExpansesDb:
             with self.eng.begin() as session:
 
                 session.execute(
-                    text(f"update users set {name} = :value where user_id = :user_id and name = :name"),
+                    text(f"update users set {name} = :value where user_id = :user_id and name = :name returning *"),
                     {"value":value, "user_id": user_id}
                 
                 )
@@ -87,17 +87,15 @@ class ExpansesDb:
             raise ExpansesDbError(e)
 
     #Deleta gasto
-    def delete(self, user_id:int=None, name:str=None) -> None:
+    def delete(self, user_id:int, name:str=None) -> None:
     
             try:
     
                 logger.info(f"deletando {"gastos" if name is None else name}...")
 
-                if user_id is None:
-                    sql = "delete from expanses"
-                    params = None
+                
 
-                elif user_id is not None and name is None:
+                if user_id is not None and name is None:
                     sql = "delete from expanses where user_id = :user_id"
                     params = {"user_id": user_id}
 
@@ -109,14 +107,10 @@ class ExpansesDb:
     
                 with self.eng.begin() as session:
 
-                    if params is None:
-    
-                        session.execute(
-                            text(sql)
-                        )
+                    
 
-                    else:
-                        session.execute(
+                    
+                    session.execute(
                                         text(sql), params
                                         )
         
