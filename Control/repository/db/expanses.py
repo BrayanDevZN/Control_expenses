@@ -50,7 +50,7 @@ class ExpansesDb:
 
             
 
-            sql = "select * from expanses where user_id = :user_id" if name is None else "select * from expanses where user_id = :user_id and name = :name"
+            sql = "select name, quantity, price, (quantity * price) as total from expanses where user_id = :user_id" if name is None else "select name, quantity, price, (quantity * price) as total from expanses where user_id = :user_id and name = :name"
 
            
             with self.eng.begin() as session:
@@ -59,7 +59,7 @@ class ExpansesDb:
                     text(sql), {"user_id": user_id} if name is None else {"user_id": user_id, "name":name}
                 )
 
-            return result.mappings().fetchone()
+            return result.mappings().fetchone() if name is not None else result.mappings().fetchall()
 
         except Exception as e:
             logger.error(e)
@@ -76,8 +76,8 @@ class ExpansesDb:
             with self.eng.begin() as session:
 
                 session.execute(
-                    text("update users set :set = :value where user_id = :user_id and name = :name"),
-                    {"set":set, "value":value, "user_id": user_id}
+                    text(f"update users set {name} = :value where user_id = :user_id and name = :name"),
+                    {"value":value, "user_id": user_id}
                 
                 )
 
