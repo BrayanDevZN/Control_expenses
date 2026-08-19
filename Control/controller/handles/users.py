@@ -4,18 +4,18 @@ Cria os handle de users
 
 from fastapi import APIRouter, HTTPException, Cookie, Response
 from service.manage import control_db, jwt, hash
-import controller.models.model_user as model
+from domain.module import models_user
 router_users = APIRouter(prefix="/users", tags=["users"])
 
 #Rota de criação de conta
 @router_users.post("/")
-async def create_user(response:Response, user:model.CreateUserModel):
+async def create_user(response:Response, user:models_user.CreateUserModel):
 
     try:
 
-        password = model.ValidUserPassword(user.password).password
+        password = models_user.ValidUserPassword(user.password).password
 
-        instance_user = control_db.users.insert(email=model.ValidEmailUser(user.email).email, password=hash.create(password=password), name=user.name)
+        instance_user = control_db.users.insert(email=models_user.ValidEmailUser(user.email).email, password=hash.create(password=password), name=user.name)
 
         
 
@@ -45,12 +45,12 @@ async def create_user(response:Response, user:model.CreateUserModel):
 
 #Rota pra buscar usuario
 @router_users.get("/")
-async def select_user(user:model.LoginUserModel, response:Response):
+async def select_user(user:models_user.LoginUserModel, response:Response):
 
     try:
 
-        email = model.ValidEmailUser(email=user.email).email
-        password = model.ValidUserPassword(password=user.password)
+        email = models_user.ValidEmailUser(email=user.email).email
+        password = models_user.ValidUserPassword(password=user.password)
 
         instance_user = control_db.users.select(search=str(email))
 
@@ -89,7 +89,7 @@ async def select_user(user:model.LoginUserModel, response:Response):
 
 #Rota pra atualizar a senha ou nome
 @router_users.patch("/")
-async def update(new_password: model.ValidUserPassword, token: str|None = Cookie(default=None), password:str=None):
+async def update(new_password: models_user.ValidUserPassword, token: str|None = Cookie(default=None), password:str=None):
 
     try:
         id = int(jwt.read(token=token["user_token"])["public_id"])
