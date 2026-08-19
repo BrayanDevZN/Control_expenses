@@ -1,3 +1,0 @@
-"""
-Cria o midlleware
-"""
