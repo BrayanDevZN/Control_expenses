@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controller.handles.users import router_users
 from controller.midllewares.users import Midlleware
-
+from controller.handles.expanses import router_expanses
 class Main:
 
     def __init__(self)-> None:
@@ -15,7 +15,7 @@ class Main:
         self.app = FastAPI()
 
         #Intancias de cada prefixo de rota
-        self.routes = [router_users]
+        self.routes = [router_users, router_expanses]
 
     #adciona o midlleware
     def _midlleware(self) -> None:
