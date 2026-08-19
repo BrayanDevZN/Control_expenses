@@ -37,7 +37,7 @@ class TablesDb:
                         create table if not exists expanses( 
                         id serial primary key,
                         user_id int,
-                        name text not null,
+                        name text not null unique,
                         quantity int not null,
                         price numeric (10,2),
                         created_at timestamptz default current_timestamp,

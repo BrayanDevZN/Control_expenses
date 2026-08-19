@@ -42,18 +42,21 @@ class ExpansesDb:
 
         
     #Busca gasto(s)
-    def select(self, user_id:int = None) -> dict|None:
+    def select(self, user_id:int, name:str=None) -> dict|None:
 
         try:
 
-            logger.info("Buscando gasto...")
+            logger.info(f"Buscando {"gastos" if name is None else name}...")
 
-            sql = "select * from expanses" if user_id is None else "select * from expanses where user_id = :user_id"
+            
 
+            sql = "select * from expanses where user_id = :user_id" if name is None else "select * from expanses where user_id = :user_id and name = :name"
+
+           
             with self.eng.begin() as session:
 
                 result = session.execute(
-                    text(sql), {"user_id": user_id}
+                    text(sql), {"user_id": user_id} if name is None else {"user_id": user_id, "name":name}
                 )
 
             return result.mappings().fetchone()
@@ -64,7 +67,7 @@ class ExpansesDb:
 
 
     #Atualiza algo do gasto
-    def update(self, user_id:int, set:Literal["name", "quantity", "price"], value:str|float|int) -> None:
+    def update(self, user_id:int,name:str, set:Literal["name", "quantity", "price"], value:str|float|int) -> None:
 
         try:
 
@@ -73,7 +76,7 @@ class ExpansesDb:
             with self.eng.begin() as session:
 
                 session.execute(
-                    text("update users set :set = :value where user_id = :user_id"),
+                    text("update users set :set = :value where user_id = :user_id and name = :name"),
                     {"set":set, "value":value, "user_id": user_id}
                 
                 )
@@ -83,20 +86,40 @@ class ExpansesDb:
             logger.error(e)
             raise ExpansesDbError(e)
 
-    #Deleta gsto
-    def delete(self, user_id:int=None) -> None:
+    #Deleta gasto
+    def delete(self, user_id:int=None, name:str=None) -> None:
     
             try:
     
-                logger.info(f"deletando {"gastos" if user_id is None else "gasto"}...")
+                logger.info(f"deletando {"gastos" if name is None else name}...")
+
+                if user_id is None:
+                    sql = "delete from expanses"
+                    params = None
+
+                elif user_id is not None and name is None:
+                    sql = "delete from expanses where user_id = :user_id"
+                    params = {"user_id": user_id}
+
+                else:
+                    sql = "delete from expanses where user_id = :user_id and name = :name"
+                    params = {"user_id": user_id, "name":name}
+
+
     
                 with self.eng.begin() as session:
+
+                    if params is None:
     
-                    session.execute(
-                        text("delete from expanses where user_id = :user_id" if user_id is not None else "delete from expanses"),
-                        {"user_id": user_id}
-                    )
-    
+                        session.execute(
+                            text(sql)
+                        )
+
+                    else:
+                        session.execute(
+                                        text(sql), params
+                                        )
+        
     
             except Exception as e:
                 logger.error(e)
