@@ -29,11 +29,24 @@ class Main:
 
             self.app.include_router(router)
 
+    #Configuração de cors
+    def _cors(self) -> None:
+
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_methods=["*"],
+            allow_headers=["*"],
+            allow_credentials=True,
+            expose_headers=[]
+        )
+
 
     #Chama todos os metodos
     def run(self) -> FastAPI:
 
         self._midlleware()
+        self._cors()
         self._router()
         return self.app
 
