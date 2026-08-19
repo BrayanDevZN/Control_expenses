@@ -29,8 +29,8 @@ class ExpansesDb:
             with self.eng.begin() as session:
 
                 result =session.execute(
-                    text("insert into expanses(user_id, name, quantity, price) values(:public_id, :name, :quantity, :price) returning *"),
-                    {"user_id": user_id, "name":name, "quantity":quantity, "price":price}
+                    text("insert into expanses(user_id, name, quantity, price) values(:user_id, :name, :quantity, :price) returning *"),
+                    {"user_id":user_id, "name":name, "quantity":quantity, "price":price}
                 )
 
             return result.mappings().fetchone()
@@ -93,8 +93,8 @@ class ExpansesDb:
                 with self.eng.begin() as session:
     
                     session.execute(
-                        text("delete from expanses where public_id = :public_id" if user_id is not None else "delete from expanses"),
-                        {"user_id":user_id}
+                        text("delete from expanses where user_id = :user_id" if user_id is not None else "delete from expanses"),
+                        {"user_id": user_id}
                     )
     
     
