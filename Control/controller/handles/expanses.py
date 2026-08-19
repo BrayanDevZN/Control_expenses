@@ -5,7 +5,7 @@ rotas de expanses
 from fastapi import APIRouter, Depends, HTTPException
 from service.manage import control_db
 from domain.module import model_expanses
-from controller.depends.depends_user import depends_user
+from controller.dependences.depends import depends
 
 #Objeto da rota
 router_expanses = APIRouter(prefix="/expanses", tags=["expanses"])
@@ -13,7 +13,7 @@ router_expanses = APIRouter(prefix="/expanses", tags=["expanses"])
 
 #Rota pra criar gasto
 @router_expanses.post("/")
-async def insert_expanses(expanse:model_expanses.validExpanse, user_id:int|None = Depends(depends_user)):
+async def insert_expanses(expanse:model_expanses.validExpanse, user_id:int|None = Depends(depends)):
 
     try:
 
@@ -43,7 +43,7 @@ async def insert_expanses(expanse:model_expanses.validExpanse, user_id:int|None 
 
 #Rota pra pegar os gastos
 @router_expanses.get("/")
-async def select_expanses(name:str=None, user_id:int|None = Depends(depends_user)):
+async def select_expanses(name:str=None, user_id:int|None = Depends(depends)):
 
     try:
 
@@ -69,7 +69,7 @@ async def select_expanses(name:str=None, user_id:int|None = Depends(depends_user
 
 #Rota que vai atualizar algum gasto
 @router_expanses.patch("/")
-async def update_expanses(expanse:model_expanses.ValidUpdateExpanses, user_id:int|None = Depends(depends_user)):
+async def update_expanses(expanse:model_expanses.ValidUpdateExpanses, user_id:int|None = Depends(depends)):
 
      try:
 
@@ -90,7 +90,7 @@ async def update_expanses(expanse:model_expanses.ValidUpdateExpanses, user_id:in
 
 #Rota que vai deletar o gasto
 @router_expanses.delete("/")
-async def delete_expanses(user_id:int|None = Depends(depends_user), name:str = None):
+async def delete_expanses(user_id:int|None = Depends(depends), name:str = None):
 
      try:
 

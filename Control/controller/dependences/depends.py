@@ -5,7 +5,7 @@ Função que vai servir de dependencia
 from service.manage import GetUser
 from fastapi import Request,HTTPException
 
-def depends_user(request:Request) -> int|HTTPException:
+def depends(request:Request) -> int|HTTPException:
 
     try:
 

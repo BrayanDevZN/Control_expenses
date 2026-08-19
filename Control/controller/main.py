@@ -5,7 +5,7 @@ Inicia toda aplicação
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controller.handles.users import router_users
-from controller.midllewares.midlleware import Midlleware
+from controller.midllewares.users import Midlleware
 
 class Main:
 
