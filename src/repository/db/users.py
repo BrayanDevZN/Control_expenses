@@ -29,7 +29,7 @@ class UsersDb:
             with self.eng.begin() as session:
 
                 result =session.execute(
-                    text("insert into users(public_id, name, email, password, role) values(:public_id,:name, :email, :password, :role) returning public_id, name, id"),
+                    text("insert into users(public_id, name, email, password, role) values(:public_id,:name, :email, :password, :role) returning public_id, name, role"),
                     {"public_id": uuid.uuid4(), "name": name, "email": email, "password": password, "role":role}
                 )
 
