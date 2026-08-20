@@ -1,10 +1,9 @@
-version: '3.8'
-
 services:
   api:
     build:
-      context: ../           
-      dockerfile: config/dockerfile 
+      context: ..
+      dockerfile: config/Dockerfile
     ports:
       - "8000:8000"
-    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -2,12 +2,12 @@
 Junta a chave do jwt com a classe e os modulos
 """
 
-from domain.encode.jwt import JwtToken
+from src.domain.encode.jwt import JwtToken
 from infra.manage import Users
 from fastapi import Request
 from infra.manage import sing, engine
-from repository.manage import ControlDb
-from domain.role.users import ValidUsers, HTTPException
+from src.repository.manage import ControlDb
+from src.domain.role.users import ValidUsers, HTTPException
 #classe que junta as chave de seguranção com a validação de /users
 
 class ValidMidlleware:

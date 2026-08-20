@@ -2,7 +2,7 @@
 Regra de negocio de users
 """
 from fastapi import Request, HTTPException
-from domain.encode.hash import HashPass
+from src.domain.encode.hash import HashPass
 
 class ValidUsers:
 

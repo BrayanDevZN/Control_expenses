@@ -2,7 +2,7 @@
 Cria a classe do midlleware
 """
 
-from service.manage import ValidMidlleware
+from src.service.manage import ValidMidlleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request
 

@@ -1,11 +1,11 @@
-from logs.log import logger
+from src.logs.log import logger
 
 
 """
 Função que vai servir de dependencia
 """
 
-from service.manage import GetUser
+from src.service.manage import GetUser
 from fastapi import Request,HTTPException
 
 def depends(request:Request) -> int|HTTPException:

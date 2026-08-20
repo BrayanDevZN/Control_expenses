@@ -1,4 +1,4 @@
-from logs.log import logger
+from src.logs.log import logger
 
 
 """Cria os hash pra senha e compara"""
