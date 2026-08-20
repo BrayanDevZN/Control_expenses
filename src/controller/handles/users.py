@@ -95,7 +95,7 @@ async def select_user(user:models_user.LoginUserModel, response:Response):
 
 #Rota pra atualizar a senha ou nome
 @router_users.patch("/")
-async def update(new_password: models_user.ValidUserPassword, token: str|None = Cookie(default=None), password:str=None):
+async def update(response: Response,new_password: models_user.ValidUserPassword, token: str|None = Cookie(default=None), password:str=None):
 
     try:
         id = int(jwt.read(token=token["user_token"])["public_id"])
@@ -113,7 +113,16 @@ async def update(new_password: models_user.ValidUserPassword, token: str|None = 
         
         control_db.users.update(public_id=id, new_pass=hash.create(password=new_password))
 
-        return await {"status": "sucess"}
+        response.delete_cookie(
+            key="user_token",
+            
+        )
+
+        response.status_code = 201
+
+        response.body = b'{"status": "sucess"}'
+
+        return await response
 
     except Exception as e:
 
@@ -154,14 +163,14 @@ async def delete(response:Response,password:str, token:str|None = Cookie(default
 
 #Rota pra logout
 @router_users.delete("/logout")
-def logout(response:Response):
+async def logout(response:Response):
 
     try:
 
         response.delete_cookie(key="user_token")
         response.body = b'{"status": "sucess"}'
 
-        return response
+        return await response
 
     except Exception as e:
 
