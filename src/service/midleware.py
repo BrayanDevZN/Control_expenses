@@ -3,11 +3,11 @@ Junta a chave do jwt com a classe e os modulos
 """
 
 from src.domain.encode.jwt import JwtToken
-from infra.manage import Users
+from src.infra.manage import Users
 from fastapi import Request
-from infra.manage import sing, engine
+from src.infra.manage import sing, engine
 from src.repository.manage import ControlDb
-from src.domain.role.users import ValidUsers, HTTPException
+from src.domain.role.users import ValidUsers
 #classe que junta as chave de seguranção com a validação de /users
 
 class ValidMidlleware:
@@ -23,39 +23,52 @@ class ValidMidlleware:
     #Decide se vai buscar o usuario pelo token do cookie ou pelo email do body
     async def _get_user(self) -> None:
 
-        cookie = self.req.cookies.get("user_token")
+        self.cookie = self.req.cookies.get("user_token") 
+        
 
-        if cookie is None:
+        if self.cookie is None:
 
-            data = await dict(self.req.json())
+            data = await self.req.json()
 
             if not "email" in data.keys():
 
                 raise TypeError("Expeted cookie or email")
 
             self.data = data["email"]
+            self.search = "email"
+            
 
         else:
+            
+            self.search = "public_id"
+            
 
-            self.data = self.jwt.read(token=cookie["user_token"])
+            self.data =  self.jwt.read(token=self.cookie)["public_id"]
 
     #Busca o usuario
     async def _user(self) -> None:
 
-        self.user = await self.db.select(search=self.data)
+        self.user =  self.db.select(search=self.search, value=self.data)
+
+    
 
     #Inicia a instancia do validador de /users
     async def _valid(self) -> None:
 
-        instance = ValidUsers(request=self.req, security=Users(), user=self.user)
+        instance = ValidUsers(request=self.req, security=Users(), user=self.user, token=self.cookie)
         self.result = await instance.run()
 
     #Executa os metodos e retorna o resultado da validação
-    def run(self) -> None|HTTPException:
+    async def run(self) -> None|dict:
 
-        self._get_user()
-        self._user()
-        return self._valid()
+        await self._get_user()
+        await self._user()
+        await self._valid()
+        
+
+
+    
+        return self.result
 
         
 

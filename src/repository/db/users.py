@@ -41,21 +41,30 @@ class UsersDb:
             raise UsersDbError(e)
 
     #Busca usuario pelo id publico ou email
-    def select(self, search:int|str) -> dict|None:
+    def select(self, search:Literal["email", "public_id"], value:str) -> dict|None:
 
         try:
 
             logger.info("Buscando usuario...")
 
-            data = "email" if isinstance(search, str) else "public_id"
+            if search == "email":
+                sql = "select * from users where email = :value"
+
+            else:
+                sql = "select * from users where public_id = :value"
+
+            
 
             with self.eng.begin() as session:
 
                 result = session.execute(
-                    text("select * from users where :data = :search"), {"data":data, "search":search}
+                    text(sql), {"value":value}
                 )
+                
 
-            return result.mappings().fetchone()
+            result = result.mappings().fetchone()
+            
+            return result
 
         except Exception as e:
             logger.error(e)
@@ -82,7 +91,7 @@ class UsersDb:
             raise UsersDbError(e)
 
     #Deleta usuario
-    def delete(self, public_id:int) -> None:
+    def delete(self, public_id:str) -> None:
     
             try:
     
