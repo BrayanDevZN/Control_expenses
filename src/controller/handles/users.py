@@ -28,7 +28,8 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
             "public_id": str(instance_user["public_id"]),
             "name": instance_user["name"],
             "role": instance_user["role"],
-            "expired": future.strftime("%Y-%m-%d")
+            "expired": future.strftime("%Y-%m-%d"),
+            "type": "acess"
         }
 
         token = jwt.create(payload=payload)
@@ -41,6 +42,21 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
             
         )
 
+        payload_refresh = {
+            "name": instance_user["name"],
+            "type": "refresh"
+        }
+        token_refresh = jwt.create(payload=payload_refresh)
+
+
+        response.set_cookie(
+            key="user_refresh_token",
+            value=token_refresh,
+            httponly=True,
+            samesite="strict"
+        )
+
+        
         return  {"name": instance_user["name"], "created_at": instance_user["created_at"]}
 
     except Exception as e:
