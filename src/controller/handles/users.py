@@ -5,9 +5,10 @@ from src.logs.log import logger
 Cria os handle de users
 """
 
-from fastapi import APIRouter, HTTPException, Cookie, Response
+from fastapi import APIRouter, HTTPException, Cookie, Response, Request
 from src.service.manage import control_db, jwt, hash
 from src.domain.module import models_user
+from fastapi.responses import JSONResponse
 router_users = APIRouter(prefix="/users", tags=["users"])
 
 #Rota de criação de conta
@@ -16,28 +17,30 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
 
     try:
 
-        password = models_user.ValidUserPassword(user.password).password
+        password = models_user.ValidUserPassword(password=user.password).password
 
-        instance_user = control_db.users.insert(email=models_user.ValidEmailUser(user.email).email, password=hash.create(password=password), name=user.name)
+        instance_user = control_db.users.insert(email=models_user.ValidEmailUser(email=user.email).email, password=hash.create(password=password), name=user.name, role="user")
 
         
 
       
         payload = {
-            "public_id": instance_user["public_id"],
+            "public_id": str(instance_user["public_id"]),
             "name": instance_user["name"],
             "role": instance_user["role"]
         }
 
         token = jwt.create(payload=payload)
 
-        return await response.set_cookie(
+        response.set_cookie(
             key="user_token",
             value=token,
             httponly=True,
             samesite="strict"
             
         )
+
+        return  {"status: sucess"}
 
     except Exception as e:
         logger.error(e)
@@ -54,9 +57,10 @@ async def select_user(user:models_user.LoginUserModel, response:Response):
     try:
 
         email = models_user.ValidEmailUser(email=user.email).email
-        password = models_user.ValidUserPassword(password=user.password)
+        password = models_user.ValidUserPassword(password=user.password).password
 
-        instance_user = control_db.users.select(search=str(email))
+  
+        instance_user = control_db.users.select(search="email", value=email)
 
         if instance_user is None:
 
@@ -65,21 +69,23 @@ async def select_user(user:models_user.LoginUserModel, response:Response):
                 detail="Not found User"
             )
 
-        if not hash.valid(password_hash=user["password"], password=password):
+        if not hash.valid(password_hash=instance_user["password"], password=str(password)):
 
             raise HTTPException(
-                status_code=501,
+                status_code=422,
                 detail="Invalid pass"
             )
 
-        token = jwt.create(payload={"public_id": user["public_id"], "name":user["name"], "role": user["role"]})
+        token = jwt.create(payload={"public_id": str(instance_user["public_id"]), "name":instance_user["name"], "role": instance_user["role"]})
 
-        return await response.set_cookie(
+        response.set_cookie(
             httponly=True,
             key="user_token",
             value=token,
             samesite="strict"
         )
+
+        return {"status": "sucess"}
 
 
        
@@ -95,34 +101,31 @@ async def select_user(user:models_user.LoginUserModel, response:Response):
 
 #Rota pra atualizar a senha ou nome
 @router_users.patch("/")
-async def update(response: Response,new_password: models_user.ValidUserPassword, token: str|None = Cookie(default=None), password:str=None):
+async def update(request:Request,response: Response, user_pass:models_user.UpdateUserModel):
 
     try:
-        id = int(jwt.read(token=token["user_token"])["public_id"])
 
-        if password != None:
+        id = jwt.read(token=request.headers["X-user_token"])["public_id"]
+        print(id)
 
-            if new_password != password:
+        if user_pass.new_password == user_pass.password:
 
-                raise HTTPException(
-                    detail="invalid password",
+                return JSONResponse(
+                    content={"detail":"invalid password"},
                     status_code=501
                 )
 
         
         
-        control_db.users.update(public_id=id, new_pass=hash.create(password=new_password))
+        control_db.users.update(public_id=id, new_pass=hash.create(password=user_pass.new_password))
 
         response.delete_cookie(
             key="user_token",
             
         )
 
-        response.status_code = 201
-
-        response.body = b'{"status": "sucess"}'
-
-        return await response
+        
+        return  {"status": "sucess"}
 
     except Exception as e:
 
@@ -135,12 +138,12 @@ async def update(response: Response,new_password: models_user.ValidUserPassword,
 
 
 #Rota pra deletar o usuario
-@router_users.delete("/{password}")
-async def delete(response:Response,password:str, token:str|None = Cookie(default=None)):
+@router_users.delete("/")
+async def delete(response:Response,password:models_user.ValidUserPassword, request:Request):
 
     try:
-
-        id = int(jwt.read(token=token["user_token"])["public_id"])
+        
+        id = jwt.read(token=request.headers["X-user_token"])["public_id"]
 
         control_db.users.delete(public_id=id)
 
@@ -152,17 +155,17 @@ async def delete(response:Response,password:str, token:str|None = Cookie(default
 
         response.body = b'{"status": "sucess"}'
 
-        return await response
+        return  response
 
     except Exception as e:
-
-        HTTPException(
+        logger.error(e)
+        raise HTTPException(
             detail="error",
             status_code=501
         )
 
 #Rota pra logout
-@router_users.delete("/logout")
+@router_users.delete("/logout/")
 async def logout(response:Response):
 
     try:

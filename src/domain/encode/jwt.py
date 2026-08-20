@@ -46,10 +46,11 @@ class JwtToken:
 
             logger.info("Lendo token...")
 
+           
             payload = jwt.decode(
                 key=self.sing,
                 algorithms=[self.alg],
-                jwt=token
+                jwt=token.encode()
             )
 
             return payload

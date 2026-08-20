@@ -20,10 +20,10 @@ class ValidUserPassword(BaseModel):
 
     #Valida senha
     @field_validator("password")
-    def valid_pass(cls, v):
+    def valid_pass(cls, v:str):
     
     
-            if not any(c.issupper() for c in v):
+            if not any(c.isupper() for c in v):
     
                 raise ValueError("Expeted upper case in password")
     
@@ -66,6 +66,13 @@ class LoginUserModel(BaseModel):
 
      email:str
      password:str
+
+
+#Model de update
+class UpdateUserModel(BaseModel):
+
+     password: str
+     new_password: str
     
 
 
