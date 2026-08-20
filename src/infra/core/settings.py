@@ -1,3 +1,5 @@
+from logs.log import logger
+
 """
 Carrega as variaveis de ambiente
 """
@@ -9,6 +11,9 @@ class NotFoundUrlError(Exception):
 
 
 class NotFoundSingError(Exception):
+    pass
+
+class NotFoundDomainError(Exception):
     pass
 
 
@@ -33,19 +38,29 @@ try:
 
     url = os.getenv("url")
     sing = os.getenv("sing")
+    domain = os.getenv("domain")
 
     #Se a url não existir, levanta erro
     if url is None:
+        logger.error("Not found url")
 
         raise NotFoundUrlError("Not found url")
 
     if sing is None:
+        logger.error("Not found sing jwt")
 
         raise NotFoundSingError("Not found sing jwt")
+
+    if domain is None:
+
+        logger.error("Not found domain")
+
+        raise NotFoundDomainError("Not found domain")
 
     
 
 except Exception as e:
+    logger.error(e)
 
     raise Exception(e)
         
