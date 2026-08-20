@@ -30,5 +30,5 @@ if __name__ == "__main__":
 
     else:
 
-        raise Exception(f"Not expeted argument {sys.argv[0]}")
+        raise Exception(f"Not expeted argument {sys.argv[1]}")
 
