@@ -1,4 +1,4 @@
-from logs.log import logger
+from src.logs.log import logger
 
 """
 Cria e le token jwt

@@ -1,4 +1,4 @@
-from logs.log import logger
+from src.logs.log import logger
 import uuid
 """
 mexe na tabela expanses

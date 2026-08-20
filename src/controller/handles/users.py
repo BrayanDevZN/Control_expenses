@@ -1,13 +1,13 @@
 
-from logs.log import logger
+from src.logs.log import logger
 
 """
 Cria os handle de users
 """
 
 from fastapi import APIRouter, HTTPException, Cookie, Response
-from service.manage import control_db, jwt, hash
-from domain.module import models_user
+from src.service.manage import control_db, jwt, hash
+from src.domain.module import models_user
 router_users = APIRouter(prefix="/users", tags=["users"])
 
 #Rota de criação de conta

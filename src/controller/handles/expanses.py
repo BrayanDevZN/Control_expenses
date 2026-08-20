@@ -1,13 +1,13 @@
-from logs.log import logger
+from src.logs.log import logger
 
 """
 rotas de expanses
 """
 
 from fastapi import APIRouter, Depends, HTTPException
-from service.manage import control_db
-from domain.module import model_expanses
-from controller.dependences.depends import depends
+from src.service.manage import control_db
+from src.domain.module import model_expanses
+from src.controller.dependences.depends import depends
 
 #Objeto da rota
 router_expanses = APIRouter(prefix="/expanses", tags=["expanses"])

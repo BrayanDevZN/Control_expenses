@@ -4,10 +4,10 @@ Inicia toda aplicação
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from controller.handles.users import router_users
-from controller.midllewares.users import Midlleware
-from controller.handles.expanses import router_expanses
-from infra.manage import domain
+from src.controller.handles.users import router_users
+from src.controller.midllewares.users import Midlleware
+from src.controller.handles.expanses import router_expanses
+from src.infra.manage import domain
 class Main:
 
     def __init__(self)-> None:

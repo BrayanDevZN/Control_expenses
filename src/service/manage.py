@@ -1,10 +1,10 @@
 """
 junta os modulos
 """
-from service.db import control_db
-from service.encode import jwt, hash
-from service.midleware import ValidMidlleware
-from service.depends import GetUser
+from src.service.db import control_db
+from src.service.encode import jwt, hash
+from src.service.midleware import ValidMidlleware
+from src.service.depends import GetUser
 
 
 

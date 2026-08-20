@@ -2,8 +2,8 @@
 junta os modulos
 """
 
-from repository.db.users import UsersDb
-from repository.db.expanses import ExpansesDb
+from src.repository.db.users import UsersDb
+from src.repository.db.expanses import ExpansesDb
 from sqlalchemy import Engine
 class ControlDb:
 

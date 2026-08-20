@@ -3,9 +3,9 @@ Classe que serve pra pegar o public id do usuario e retornar o id
 """
 
 from fastapi import Request, HTTPException
-from service.db import control_db
-from infra.manage import engine
-from service.encode import jwt
+from src.service.db import control_db
+from src.infra.manage import engine
+from src.service.encode import jwt
 
 
 
