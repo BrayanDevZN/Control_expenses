@@ -50,54 +50,6 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
             status_code=501
         )
 
-#Rota pra buscar usuario
-@router_users.get("/")
-async def select_user(user:models_user.LoginUserModel, response:Response):
-
-    try:
-
-        email = models_user.ValidEmailUser(email=user.email).email
-        password = models_user.ValidUserPassword(password=user.password).password
-
-  
-        instance_user = control_db.users.select(search="email", value=email)
-
-        if instance_user is None:
-
-            raise HTTPException(
-                status_code=401,
-                detail="Not found User"
-            )
-
-        if not hash.valid(password_hash=instance_user["password"], password=str(password)):
-
-            raise HTTPException(
-                status_code=422,
-                detail="Invalid pass"
-            )
-
-        token = jwt.create(payload={"public_id": str(instance_user["public_id"]), "name":instance_user["name"], "role": instance_user["role"]})
-
-        response.set_cookie(
-            httponly=True,
-            key="user_token",
-            value=token,
-            samesite="strict"
-        )
-
-        return {"status": "sucess"}
-
-
-       
-    except Exception as e:
-
-        logger.error(e)
-
-        raise HTTPException(
-            detail="error",
-            status_code=501
-        )
-
 
 #Rota pra atualizar a senha ou nome
 @router_users.patch("/")
@@ -163,27 +115,6 @@ async def delete(response:Response,password:models_user.ValidUserPassword, reque
             detail="error",
             status_code=501
         )
-
-#Rota pra logout
-@router_users.delete("/logout/")
-async def logout(response:Response):
-
-    try:
-
-        response.delete_cookie(key="user_token")
-        response.body = b'{"status": "sucess"}'
-
-        return await response
-
-    except Exception as e:
-
-        logger.error(e)
-
-
-        raise HTTPException(
-            detail="error", status_code=501
-        )
-
 
 
 
