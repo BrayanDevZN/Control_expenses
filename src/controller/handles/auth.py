@@ -3,7 +3,7 @@ from logs.log import logger
 """
 Rota que gerencia os cookie de sessão
 """
-
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Response, Request, HTTPException
 from src.domain.module import models_user
 from src.service.manage import control_db, jwt
@@ -35,8 +35,14 @@ async def login(response:Response, user:models_user.LoginUserModel):
                     status_code=422,
                     detail="Invalid pass"
                 )
+            future = datetime.now() + timedelta(days=3)
     
-            token = jwt.create(payload={"public_id": str(instance_user["public_id"]), "name":instance_user["name"], "role": instance_user["role"]})
+            token = jwt.create(payload={"public_id": str(instance_user["public_id"]), 
+                                        "name":instance_user["name"], 
+                                        "role": instance_user["role"],
+                                        "expired": future.strftime("%Y-%m-%d")}
+                                        )
+            
     
             response.set_cookie(
                 httponly=True,
@@ -45,7 +51,7 @@ async def login(response:Response, user:models_user.LoginUserModel):
                 samesite="strict"
             )
     
-            return {"status": "sucess"}
+            return {"name": instance_user["name"], "created_at": instance_user["created_at"]}
     
     
            

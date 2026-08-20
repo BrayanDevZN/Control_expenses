@@ -4,7 +4,7 @@ from src.logs.log import logger
 """
 Cria os handle de users
 """
-
+from datetime import datetime, time, timedelta
 from fastapi import APIRouter, HTTPException, Cookie, Response, Request
 from src.service.manage import control_db, jwt, hash
 from src.domain.module import models_user
@@ -22,12 +22,13 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
         instance_user = control_db.users.insert(email=models_user.ValidEmailUser(email=user.email).email, password=hash.create(password=password), name=user.name, role="user")
 
         
-
+        future = datetime.now() + timedelta(days=3)
       
         payload = {
             "public_id": str(instance_user["public_id"]),
             "name": instance_user["name"],
-            "role": instance_user["role"]
+            "role": instance_user["role"],
+            "expired": future.strftime("%Y-%m-%d")
         }
 
         token = jwt.create(payload=payload)
@@ -40,7 +41,7 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
             
         )
 
-        return  {"status: sucess"}
+        return  {"name": instance_user["name"], "created_at": instance_user["created_at"]}
 
     except Exception as e:
         logger.error(e)

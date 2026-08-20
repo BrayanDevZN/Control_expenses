@@ -4,15 +4,16 @@ Regra de negocio de users
 from fastapi import Request
 from src.domain.encode.hash import HashPass
 import json
+from datetime import timedelta, datetime
 class ValidUsers:
 
-    def __init__(self,security, request:Request, user: str|None, token:str|None)-> None:
+    def __init__(self,security, request:Request, token:str|None, user: str|None = None)-> None:
 
         self.req = request
         self.user = user
         self.sec = security
         self.token = token
-
+       
     #Confere se o usaurio existe
     async def _exists(self) -> dict:
 
@@ -64,6 +65,23 @@ class ValidUsers:
                 self.req.scope["headers"] = new_headers.raw
 
             self.result["token"] = self.token
+
+    #Confere se o token ja foi expirado
+    def expired(self, expired:str) -> dict:
+
+        if self.req.method in self.sec.token["methods"] and self.req.url.path == self.sec.token["path"] and not self.req.url.path in self.sec.token["ignore"]:
+
+            now = datetime.now()
+            expired = datetime.strptime(expired, "%Y-%m-%d")
+            
+
+            return {"status_code": 422, "error": "token expired"}  if now >= expired else {"status_code":201, "error": None}
+
+
+            
+        
+
+
 
 
 
