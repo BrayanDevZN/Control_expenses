@@ -1,3 +1,5 @@
+from logs.log import logger
+
 """
 rotas de expanses
 """
@@ -19,10 +21,12 @@ async def insert_expanses(expanse:model_expanses.validExpanse, user_id:int|None 
 
         #se o user id não existir, levanta erro
         if not isinstance(user_id, int):
+            logger.error(str(e))
             raise user_id
 
         if control_db.expanses.select(name=expanse.name, user_id=user_id) is not None:
-
+             logger.error(f"{expanse.name} exists")
+          
              raise HTTPException(
                   detail=f"{expanse.name} exists"
              )
@@ -37,6 +41,8 @@ async def insert_expanses(expanse:model_expanses.validExpanse, user_id:int|None 
         return await result
 
     except Exception as e:
+
+        logger.error(e)
 
         raise HTTPException(status_code=501, detail="error")
 
@@ -63,6 +69,7 @@ async def select_expanses(name:str=None, user_id:int|None = Depends(depends)):
         return await expanse
 
     except Exception as e:
+         logger.error(e)
 
          raise HTTPException(status_code=501, detail="error")
 
@@ -85,6 +92,7 @@ async def update_expanses(expanse:model_expanses.ValidUpdateExpanses, user_id:in
           return await result
 
      except Exception as e:
+          logger.error(e)
 
           raise HTTPException(status_code=501, detail="error")
 
@@ -99,9 +107,10 @@ async def delete_expanses(user_id:int|None = Depends(depends), name:str = None):
 
         control_db.expanses.delete(user_id=user_id, name=name)
 
-        return {"status": "sucess"}
+        return await {"status": "sucess"}
 
      except Exception as e:
+          logger.error(e)
 
           raise HTTPException(status_code=501, detail="error")
 

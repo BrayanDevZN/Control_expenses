@@ -1,3 +1,6 @@
+
+from logs.log import logger
+
 """
 Cria os handle de users
 """
@@ -28,7 +31,7 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
 
         token = jwt.create(payload=payload)
 
-        return response.set_cookie(
+        return await response.set_cookie(
             key="user_token",
             value=token,
             httponly=True,
@@ -37,6 +40,7 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
         )
 
     except Exception as e:
+        logger.error(e)
 
         raise HTTPException(
             detail="error",
@@ -70,7 +74,7 @@ async def select_user(user:models_user.LoginUserModel, response:Response):
 
         token = jwt.create(payload={"public_id": user["public_id"], "name":user["name"], "role": user["role"]})
 
-        return response.set_cookie(
+        return await response.set_cookie(
             httponly=True,
             key="user_token",
             value=token,
@@ -80,6 +84,8 @@ async def select_user(user:models_user.LoginUserModel, response:Response):
 
        
     except Exception as e:
+
+        logger.error(e)
 
         raise HTTPException(
             detail="error",
@@ -107,9 +113,11 @@ async def update(new_password: models_user.ValidUserPassword, token: str|None = 
         
         control_db.users.update(public_id=id, new_pass=hash.create(password=new_password))
 
-        return {"status": "sucess"}
+        return await {"status": "sucess"}
 
     except Exception as e:
+
+        logger.error(e)
 
         raise HTTPException(
             detail="error",
@@ -156,6 +164,10 @@ def logout(response:Response):
         return response
 
     except Exception as e:
+
+        logger.error(e)
+
+
         raise HTTPException(
             detail="error", status_code=501
         )

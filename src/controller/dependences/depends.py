@@ -1,3 +1,6 @@
+from logs.log import logger
+
+
 """
 Função que vai servir de dependencia
 """
@@ -14,5 +17,7 @@ def depends(request:Request) -> int|HTTPException:
         return instance.run()
 
     except Exception as e:
+
+        logger.error(e)
 
         raise Exception(e)
