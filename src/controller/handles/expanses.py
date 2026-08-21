@@ -35,7 +35,7 @@ async def insert_expanses(expanse:model_expanses.validExpanse, user_id:int|None 
 
         
         #Cria o gasto
-        result = control_db.expanses.insert(name=expanse.name, quantity=expanse.quantity, price=expanse.price)
+        result = control_db.expanses.insert(name=expanse.name, quantity=expanse.quantity, price=expanse.price, user_id=user_id)
         result["total"] = float(result["quantity"]) * result["price"]
         
         return await result
