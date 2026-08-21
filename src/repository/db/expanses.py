@@ -76,7 +76,7 @@ class ExpansesDb:
             with self.eng.begin() as session:
 
                 session.execute(
-                    text(f"update users set {name} = :value where user_id = :user_id and name = :name returning *"),
+                    text(f"update expanses set {name} = :value where user_id = :user_id and name = :name returning *"),
                     {"value":value, "user_id": user_id}
                 
                 )
