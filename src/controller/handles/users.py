@@ -38,13 +38,15 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
             key="user_token",
             value=token,
             httponly=True,
-            samesite="strict"
+            samesite="strict",
+            secure=True
             
         )
 
         payload_refresh = {
             "name": instance_user["name"],
-            "type": "refresh"
+            "type": "refresh",
+            "public_id": instance_user["public_id"]
         }
         token_refresh = jwt.create(payload=payload_refresh)
 
@@ -53,7 +55,8 @@ async def create_user(response:Response, user:models_user.CreateUserModel):
             key="user_refresh_token",
             value=token_refresh,
             httponly=True,
-            samesite="strict"
+            samesite="strict",
+            secure=True
         )
 
         

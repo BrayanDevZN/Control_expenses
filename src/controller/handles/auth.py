@@ -50,7 +50,8 @@ async def login(response:Response, user:models_user.LoginUserModel):
                 httponly=True,
                 key="user_token",
                 value=token,
-                samesite="strict"
+                samesite="strict",
+                secure=True
             )
 
 
@@ -66,7 +67,8 @@ async def login(response:Response, user:models_user.LoginUserModel):
                         key="user_refresh_token",
                         value=token_refresh,
                         httponly=True,
-                        samesite="strict"
+                        samesite="strict",
+                        secure=True
                     )
             
     
@@ -93,6 +95,7 @@ async def logout(response:Response):
             logger.info("Deletando cookie...")
 
             response.delete_cookie(key="user_token")
+            response.delete_cookie(key="user_refresh_token")
 
             return {"status": "sucess"}
 
@@ -134,7 +137,9 @@ async def refresh(response:Response, user_refresh_token: str|None = Cookie(defau
                             httponly=True,
                             key="user_token",
                             value=token,
-                            samesite="strict"
+                            samesite="strict",
+                            secure=True
+
                         )
             
             
@@ -150,7 +155,8 @@ async def refresh(response:Response, user_refresh_token: str|None = Cookie(defau
                                     key="user_refresh_token",
                                     value=token_refresh,
                                     httponly=True,
-                                    samesite="strict"
+                                    samesite="strict",
+                                    secure=True
                                 )
 
             return {"status": "sucess"}
